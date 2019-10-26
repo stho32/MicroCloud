@@ -8,3 +8,4 @@ It is a probably client pc with a small sql server database that coordinates eve
   - [ ] Install any version of Microsoft Sql Server you like. Sql Server Express is absolutely fine.
   - [ ] Install a version of Microsoft Sql Server Management Studio
 
+*(to be continued)*

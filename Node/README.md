@@ -10,10 +10,12 @@ To install a node manually use the following instructions:
   - [ ] Use https://rufus.ie/ rufus to create a bootable usb stick for your node.
   - [ ] After the installation, there is sconfig running on the server. Using this you may activate remote desktop connections. I use this later if everything is falling apart. Actually I do not have many computers in my network, so its kinda an easy way to find all nodes. (I just look how many computers are there with remote desktop enabled).
   - [ ] start powershell on that node and type `Enable-PSRemoting`.
+  - [ ] to enable remote control of the hyper-v server `Enable-WSManCredSSP -Role server`, `new-itemproperty -name LocalAccountTokenFilterPolicy -path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -propertyType DWord -value 1`
   
 ## 2. on the master
 
   - [ ] use this article to enable ps-remoting to that host from your "master": https://stackoverflow.com/questions/40248408/powershell-remoting-to-a-workgroup-computer
+  - [ ] `Enable-WSManCredSSP -Role client -DelegateComputer "fqdn-of-hyper-v-host"`
 
 ## 3. on the node again
 

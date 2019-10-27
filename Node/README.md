@@ -26,5 +26,5 @@ To install a node manually use the following instructions:
   - [ ] we create a home directory and check out this repository there.
     - [ ] create a folder `C:\Projekte`, you can name it anyway you want. (That's my default project folder.)
     - [ ] run `git clone https://github.com/stho32/MicroCloud.git`
+  - [ ] run `./Node/Setup.ps1` within the MicroCloud project directory 
 
-*(to be continued)*

@@ -20,5 +20,7 @@ if ( !([bool]$availableSwitches) ) {
     Write-Host "     -> create new external switch called 'external switch'"
 
     New-VMSwitch -name "external switch" -NetAdapterName ($activeNetworkAdapter.Name) -AllowManagementOs $true
+} else {
+    Write-Host "   - ok"
 }
 

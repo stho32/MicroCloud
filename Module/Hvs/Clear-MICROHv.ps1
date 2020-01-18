@@ -7,14 +7,14 @@ function Clear-MICROHV {
     Param()
 
     Process {
-        $vms = Get-MICROVM | Where State -eq "Off" 
+        $vms = Get-MICROVM | Where { $_.Vm.State -eq "Off" }
         
         $vms | ForEach-Object {
             $vm = $_
 
-            Write-Host "- removing $($vm.Name) from $($vm.Node) which is not needed anymore..."
+            Write-Host "- removing $($vm.vm.Name) from $($vm.Node) which is not needed anymore..."
 
-            Invoke-Command -ComputerName $vm.Node -ArgumentList $vm.VMId -ScriptBlock {
+            Invoke-Command -ComputerName $vm.Node -ArgumentList $vm.vm.VMId -ScriptBlock {
                 Param($vmID)
 
                 try {

@@ -18,7 +18,7 @@ function Get-MICRONodeStats {
 
             $reservedRAMPerNode = 4 # GB
 
-            $usedByVMsGB = ((($vmsOnTheMaster | Where-Object Node -eq $node).VM.MemoryAssigned/1GB) | Measure-Object -Sum).Sum
+            $usedByVMsGB = ((($vmsOnTheMaster | Where-Object Node -eq $node).VM.MemoryAssigned) | Measure-Object -Sum).Sum/1GB
 
             New-Object -TypeName PSObject -Property @{
                 Node = $node

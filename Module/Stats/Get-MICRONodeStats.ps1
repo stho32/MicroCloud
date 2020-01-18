@@ -16,7 +16,7 @@ function Get-MICRONodeStats {
                 (Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).sum /1gb
             }
 
-            $reservedRAMPerNode = 4 # GB
+            $reservedRAMPerNode = 6 # GB
 
             $usedByVMsGB = ((($vmsOnTheMaster | Where-Object Node -eq $node).VM.MemoryAssigned) | Measure-Object -Sum).Sum/1GB
 

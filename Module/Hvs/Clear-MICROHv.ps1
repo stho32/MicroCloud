@@ -14,14 +14,14 @@ function Clear-MICROHV {
 
             Write-Host "- removing $($vm.vm.Name) from $($vm.Node) which is not needed anymore..."
 
-            Invoke-Command -ComputerName $vm.Node -ArgumentList $vm.vm.VMId -ScriptBlock {
-                Param($vmID)
+            Invoke-Command -ComputerName $vm.Node -ArgumentList $vm.vm.VMId, $vm.vm.Name -ScriptBlock {
+                Param($vmID, $vmName)
 
                 try {
                     Remove-Item (Get-VHD -VMId $vmID).Path
                 } catch {}
 
-                $_ | Remove-VM -Force
+                Remove-VM -Name $vmName -Force
             }
         }
     }

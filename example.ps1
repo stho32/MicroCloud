@@ -2,7 +2,13 @@
     .SYNOPSIS
     This script is my scratchbook for the things that are automated more or less well.
 
+    .DESCRIPTION
+    Use the lines or the full script
+
+    # synchronize all images within the microcloud
+    Sync-MICROImage
 #>
+
 
 Remove-Module MicroCloud*
 Import-Module "C:\Projekte\MicroCloud\Module\MicroCloud.psm1"

@@ -1,47 +1,4 @@
-﻿function Get-MICROVM {
-    <#
-        .SYNOPSIS
-        lists all micro vms
-    #>
-    [CmdletBinding()]
-    Param(
-        [Switch]$NoFilter # Get absolutely any VM on the system, e.g. for system resource management
-    )
-
-    Process {
-        if ( $NoFilter )
-        {
-           $MicroNodes | ForEach-Object {
-                $node = $_
-
-                Get-VM -ComputerName $node | ForEach-Object {
-                    $vm = $_
-
-                    New-Object -TypeName PSObject -Property @{
-                        Node = $node
-                        VM = $vm
-                    }
-                }
-            } 
-
-            return
-        }
-
-        $MicroNodes | ForEach-Object {
-            $node = $_
-
-            Get-VM -ComputerName $node -Name ($MicroVMNamesStartWith + "*") | ForEach-Object {
-                $vm = $_
-
-                New-Object -TypeName PSObject -Property @{
-                    Node = $node
-                    VM = $vm
-                }
-            }
-        }
-    }
-}
-
+﻿
 function Clear-MICROHV {
     <#
         .SYNOPSIS

@@ -11,12 +11,12 @@ function Add-MICROVM {
     )
 
     Process {
-        $ramNeededInGb = 4
         <# Find us the most empty node to create the next vm there.
            We find this node by our scarest resource, the memory.  
         #>
         $mostEmptyNode = (Get-MICRONodeStats | Sort-Object -Property RamTotalGB -Descending | Select -First 1)
 
+        $ramNeededInGb = 4
         if ($mostEmptyNode.RamTotalGB -lt $ramNeededInGb) {
             throw "Not enough RAM for another VM..."
         }

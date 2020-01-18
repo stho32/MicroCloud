@@ -18,9 +18,9 @@ function Add-MICROVM {
         $mostEmptyNode = (Get-MICRONodeStats | Sort-Object -Property RamTotalGB -Descending | Select -First 1).Node
 
         Invoke-Command -ComputerName $mostEmptyNode `
-            -ArgumentList $global:MICROCLOUD_ImageNodeDirectory, $global:MICROCLOUD_VMNamesStartWith `
+            -ArgumentList $global:MICROCLOUD_ImageNodeDirectory, $global:MICROCLOUD_VMNamesStartWith, $baseImage, $mostEmptyNode `
             -ScriptBlock {
-                Param($ImageNodeDirectory, $MicroVMNamesStartWith)
+                Param($ImageNodeDirectory, $MicroVMNamesStartWith, $baseImage, $node)
 
                 # The path, where the vm hard disks are created locally. This is a default of Hyper-V.
                 $disksPath = "C:\Users\Public\Documents\Hyper-V\Virtual hard disks"
@@ -43,7 +43,10 @@ function Add-MICROVM {
                 $vm | Start-VM 
 
                 # in case we want to do more we return our new vm
-                $vm
+                New-Object -TypeName PSObject -Property @{
+                    Node = $node
+                    VM = $vm
+                }
             }
     }
 }

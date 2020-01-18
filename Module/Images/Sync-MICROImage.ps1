@@ -2,17 +2,24 @@ function Sync-MICROImage {
     <#
         .SYNOPSIS
         Replicates the base disk images to every node
+
+        .DESCRIPTION
+        This cmdlet is run on the MASTER to distribute all VHDX, which follow the convention
+        of ending with -image.vhdx to the folder where all the vhdx are saved for "production".
+
+        "Production" in this case means, that there is a folder where the base images for the 
+        upcoming vms are connected / created from. 
+        
     #>
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory=$true)]
-        [string]$SourcePath,
-        [Parameter(Mandatory=$true)]
-        [string]$TargetPath
     )
 
     Process {
-        $MicroNodes | ForEach-Object {
+        $SourcePath = $global:MICROCLOUD_ImageDirectory
+        $TargetPath = $global:MICROCLOUD_ImageNodeDirectory
+
+        $global:MICROCLOUD_MicroNodes | ForEach-Object {
             $node = $_
 
             Write-Host "- ensuring target directory exists on $node ..."

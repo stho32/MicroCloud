@@ -9,12 +9,28 @@ function Get-MICRONodeStats {
     Process {
         $vmsOnTheMaster = Get-MICROVM -NoFilter
 
+        $ramTotalJobs = $global:MICROCLOUD_MicroNodes | ForEach-Object {
+            $node = $_
+        
+            Start-Job -ArgumentList $node -ScriptBlock {
+                Param($node)
+                $RamGB = Invoke-Command -ComputerName $node -ScriptBlock {
+                    (Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).sum /1gb
+                }
+
+                New-Object -TypeName PSObject -Property @{
+                    Node = $node
+                    RamGB = $RamGB
+                }
+            }
+        }
+        
+        $ramTotal = $ramTotalJobs | Wait-Job | Receive-Job
+
         $global:MICROCLOUD_MicroNodes | ForEach-Object {
             $node = $_
 
-            $ramTotal = Invoke-Command -ComputerName $node -ScriptBlock {
-                (Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).sum /1gb
-            }
+            $ramTotalNode = ($ramTotal | Where-Object Node -eq $node).RamGB
 
             $reservedRAMPerNode = 6 # GB
 
@@ -22,9 +38,11 @@ function Get-MICRONodeStats {
 
             New-Object -TypeName PSObject -Property @{
                 Node = $node
-                RamTotalGB = $ramTotal - $reservedRAMPerNode - $usedByVMsGB
+                RamTotalGB = $ramTotalNode - $reservedRAMPerNode - $usedByVMsGB
             }
         }
     }
 }
+
+
 

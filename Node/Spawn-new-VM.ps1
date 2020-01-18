@@ -1,45 +1,4 @@
-﻿function Add-MICROVM {
-    <#
-        .SYNOPSIS
-        Creates a VM from an image and boots it up
-    #>
-    [CmdletBinding()]
-    Param(
-        [Parameter(Mandatory=$true)]
-        [ValidateSet("Basis-Windows-Server-2019-Image")]
-        $baseImage
-    )
-
-    Process {
-        $mostEmptyNode = (Get-MICRONodeStats | Sort-Object -Property RamTotalGB -Descending | Select -First 1).Node
-
-        Invoke-Command -ComputerName $mostEmptyNode `
-            -ArgumentList $ImageNodeDirectory `
-            -ScriptBlock {
-                Param($ImageNodeDirectory)
-                $disksPath = "C:\Users\Public\Documents\Hyper-V\Virtual hard disks"
-                $baseImagePath = "C:\Users\Public\Documents\Hyper-V\Virtual hard disks\$baseImage.vhdx"
-
-                $guid = [Guid]::NewGuid().ToString()
-                $newVmName = $MicroVMNamesStartWith + $guid
-
-                $vmDiskPath = (Join-Path $disksPath "$newVmName")+".vhdx"
-
-                # create a new differential disk
-                $vmDisk = New-VHD -Path $vmDiskPath -Differencing -ParentPath $baseImagePath
-
-                $vm = New-VM -Name $newVmName -MemoryStartupBytes 4GB -VHDPath $vmDiskPath -SwitchName "external switch" -Generation 2 
-
-                $vm | Set-VMProcessor -Count 8
-
-                $vm | Start-VM 
-
-                $vm
-            }
-    }
-}
-
-function Get-MICROVM {
+﻿function Get-MICROVM {
     <#
         .SYNOPSIS
         lists all micro vms

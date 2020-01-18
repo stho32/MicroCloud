@@ -1,25 +1,4 @@
 ﻿
-function Clear-MICROHV {
-    <#
-        .SYNOPSIS
-        removes all shut down test vms
-    #>
-    [CmdletBinding()]
-    Param()
-
-    Process {
-        $vms = Get-MICROVM | Where State -eq "Off" 
-        
-        $vms | ForEach-Object {
-            try {
-                Remove-Item (Get-VHD -VMId $_.VMId).Path
-            } catch {}
-
-            $_ | Remove-VM -Force
-        }
-    }
-}
-
 
 function Get-MICRONodeStats {
     <#

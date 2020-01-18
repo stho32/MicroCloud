@@ -1,5 +1,3 @@
-﻿
-
 function Get-MICRONodeStats {
     <#
         .SYNOPSIS
@@ -9,7 +7,7 @@ function Get-MICRONodeStats {
     Param()
 
     Process {
-        $vmsOnSystem= Get-MICROVM -NoFilter
+        $vmsOnTheMaster = Get-MICROVM -NoFilter
 
         $MicroNodes | ForEach-Object {
             $node = $_
@@ -20,7 +18,7 @@ function Get-MICRONodeStats {
 
             $reservedRAMPerNode = 4 # GB
 
-            $usedByVMsGB = ((($vmsOnSystem | Where-Object Node -eq $node).VM.MemoryAssigned/1GB) | Measure-Object -Sum).Sum
+            $usedByVMsGB = ((($vmsOnTheMaster | Where-Object Node -eq $node).VM.MemoryAssigned/1GB) | Measure-Object -Sum).Sum
 
             New-Object -TypeName PSObject -Property @{
                 Node = $node

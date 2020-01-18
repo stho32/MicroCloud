@@ -43,6 +43,8 @@ function Add-MICROVM {
                 $vm = New-VM -Name $newVmName -MemoryStartupBytes 4GB -VHDPath $vmDiskPath -SwitchName "external switch" -Generation 2 
                 # more processing power
                 $vm | Set-VMProcessor -Count 8
+                # in case we have the image of a linux distribution
+                $vm | Set-VMFirmware -EnableSecureBoot Off
                 # start it
                 $vm | Start-VM 
 

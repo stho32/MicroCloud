@@ -9,7 +9,7 @@ function Get-MICRONodeStats {
     Process {
         $vmsOnTheMaster = Get-MICROVM -NoFilter
 
-        $MicroNodes | ForEach-Object {
+        $global:MICROCLOUD_MicroNodes | ForEach-Object {
             $node = $_
 
             $ramTotal = Invoke-Command -ComputerName $node -ScriptBlock {

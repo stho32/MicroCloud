@@ -7,7 +7,7 @@
     With a configuration like this you can adapt them to changing needs.
 #>
 
-$global:MICROCLOUD_VMNamesStartWith = "Test-"
+$global:MICROCLOUD_VMNamesStartWith = "MicroVM-"
 $global:MICROCLOUD_MicroNodes = "MASTER", "NODE01", "NODE02"
 
 $global:MICROCLOUD_ImageDirectory = "C:\Users\Public\Documents\Hyper-V\Virtual hard disks"

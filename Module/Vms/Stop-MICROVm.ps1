@@ -12,10 +12,13 @@ function Stop-MICROVM {
     )
     
     process {
-        Write-Host "- stopping $($VM.VMName) on $Node ..."
-        Invoke-Command -ComputerName $Node -ArgumentList $VM.VMName -ScriptBlock {
-            Param($vmName)
-            Get-VM $vmName | Stop-VM -Force
+        if ( $VM.State -ne "Off" ) {
+            Write-Host "- stopping $($VM.VMName) on $Node ..."
+            Invoke-Command -ComputerName $Node -ArgumentList $VM.VMName -ScriptBlock {
+                Param($vmName)
+
+                Get-VM $vmName | Stop-VM -Force
+            }
         }
     }
 }

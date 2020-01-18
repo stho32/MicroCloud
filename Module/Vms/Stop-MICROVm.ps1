@@ -15,7 +15,7 @@ function Stop-MICROVM {
         Write-Host "- stopping $($VM.VMName) on $Node ..."
         Invoke-Command -ComputerName $Node -ArgumentList $VM.VMName -ScriptBlock {
             Param($vmName)
-            Get-VM $vmName | Stop-VM 
+            Get-VM $vmName | Stop-VM -Force
         }
     }
 }

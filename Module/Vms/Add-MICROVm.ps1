@@ -6,7 +6,6 @@ function Add-MICROVM {
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory=$true)]
-        [ValidateSet("Basis-Windows-Server-2019-Image")]
         $BaseImage
     )
 

@@ -22,3 +22,38 @@ This system is installed with a Windows Server 2019 (Standard) as Domain Control
 ## Node
 
 You have of cause several nodes in this environment. They are all the same - Microsoft Hyper-V 2019 Servers.
+
+
+
+### Entrance Router Config (MikroTik rb951g-2HnD)
+
+```
+# jan/02/1970 00:24:18 by RouterOS 6.40.4
+# software id = 82QZ-DS00
+#
+# model = 951G-2HnD
+# serial number = 8A7008DD3EE3
+/interface wireless
+set [ find default-name=wlan1 ] ssid=MikroTik
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip pool
+add name=dhcp_pool1 ranges=192.168.1.2-192.168.1.254
+/ip dhcp-server
+add address-pool=dhcp_pool1 disabled=no interface=ether2 lease-time=3d name=dhcp1
+/ip address
+add address=192.168.1.1/24 interface=ether2 network=192.168.1.0
+/ip dhcp-client
+add dhcp-options=hostname,clientid disabled=no interface=ether1
+/ip dhcp-server network
+add address=192.168.1.0/24 dns-server=4.2.2.2 gateway=192.168.1.1
+/ip dns static
+add address=192.168.88.1 name=router.lan
+/ip firewall nat
+add action=masquerade chain=srcnat out-interface=ether1
+/system identity
+set name=EntranceRouter
+/system ntp client
+set enabled=yes primary-ntp=50.19.122.125
+
+```

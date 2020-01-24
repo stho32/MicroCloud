@@ -12,7 +12,7 @@ A micro Hyper-V cloud held together by powershell
 
 A little bit of setup and cables later I can start ~18 virtual machines from preconfigured images simply by running a powershell command. [Details on architecture and setup here](docs/architecture.md)
 
-I want it to become a little independet "micro cloud" which will allow me and my collegues to request testing and build environments on demand. 
+I want it to become a little independent "micro cloud" which will allow me and my collegues to request testing and build environments on demand. 
 
 ## What commands are available? (demo??)
 

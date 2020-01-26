@@ -13,6 +13,16 @@
 Remove-Module MicroCloud*
 Import-Module "C:\Projekte\MicroCloud\Module\MicroCloud.psm1"
 
+
+<# EXAMPLE: Send a command to the router using SSH
+
+$session = New-SSHSession -ComputerName 192.168.88.1 -Credential (Get-Credential) -Verbose
+
+(Invoke-SSHCommand -SSHSession $session -Command "/ip address print").Output
+
+Remove-SSHSession $session
+#>
+
 Clear
 
 $start = Get-Date

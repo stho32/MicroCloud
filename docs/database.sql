@@ -8,6 +8,11 @@
 
 */	
  
+IF (EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'VirtualMachine'))
+BEGIN
+	DROP TABLE VirtualMachine;
+END
+GO
 
 IF (EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'Node'))
 BEGIN
@@ -29,8 +34,7 @@ GO
 
 */	
 
-
-IF (EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'Node'))
+IF (EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'Configuration'))
 BEGIN
 	DROP TABLE Configuration;
 END
@@ -53,6 +57,11 @@ GO
 
 */	
 
+IF (EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'DiskImage'))
+BEGIN
+	DROP TABLE DiskImage;
+END
+GO
 
 CREATE TABLE DiskImage (
 	Id INT NOT NULL PRIMARY KEY IDENTITY,
@@ -66,17 +75,8 @@ GO
 
 	All of those disk images have to be distributed to all nodes.
 
+	(later)
 */	
-
-CREATE TABLE DiskImageReplication (
-	Id INT NOT NULL PRIMARY KEY IDENTITY,
-	Node INT NOT NULL REFERENCES Node(Id),
-	PathOnNode VARCHAR(1000) NOT NULL DEFAULT '',
-	CopyingStartedAt DATETIME NULL,
-	CopyingCompletedAt DATETIME NULL
-)
-
-GO
 
 /* ------------------------------------------------------------------------------------------
 
@@ -84,6 +84,7 @@ GO
 	Every row in this table is actually an "intent" that there should be 
 
 */	
+
 CREATE TABLE VirtualMachine (
 	Id INT NOT NULL PRIMARY KEY IDENTITY,
 	Name VARCHAR(200) NOT NULL DEFAULT '',
@@ -106,10 +107,16 @@ CREATE TABLE VirtualMachine (
 	When a virtual machine is deactivated, all port forwardings are deleted.
 
 */	
+IF (EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'VirtualMachinePortForwarding'))
+BEGIN
+	DROP TABLE VirtualMachinePortForwarding;
+END
+GO
+
 CREATE TABLE VirtualMachinePortForwarding (
 	Id INT NOT NULL PRIMARY KEY IDENTITY,
 	Comment VARCHAR(200) NOT NULL DEFAULT '',
 	LocalPort INT NOT NULL DEFAULT 0,
 	PortOnEntranceRouter INT NOT NULL DEFAULT 0,
-
+	IsEnabled BIT NOT NULL DEFAULT 0 -- Has it been processed and set on the router? (The background process does that)
 )

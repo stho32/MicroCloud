@@ -233,6 +233,29 @@ GO
 
 /* ------------------------------------------------------------------------------------------
 
+	View to select all vms that need to be added in this round
+
+*/	
+IF (EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'VirtualMachinesThatWaitForRemoval'))
+BEGIN
+	DROP VIEW VirtualMachinesThatWaitForRemoval;
+END
+GO
+CREATE VIEW VirtualMachinesThatWaitForRemoval
+	AS
+	/* these are the virtual machines that we need to "activate"
+	   which basically means we create them within the hypervisor.
+	*/
+	SELECT vm.[Name] AS VMName, 
+		   n.Name AS Node
+	  FROM VirtualMachine vm
+	  JOIN Node n ON vm.CreatedOnNode = n.Id
+	 WHERE RemoveThisVm = 1
+GO
+
+
+/* ------------------------------------------------------------------------------------------
+
 	The virtual machine has been activated
 
 */	

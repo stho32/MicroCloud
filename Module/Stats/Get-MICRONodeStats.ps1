@@ -1,46 +1,21 @@
 function Get-MICRONodeStats {
     <#
         .SYNOPSIS
-        collects stats needed for vm distribution
+        collects stats needed for vm distribution (derived from database calculation)
+
+        .DESCRIPTION
+        This cmdlet retrieves statistical information based on the data we have in our database.
+        This is not as perfect as getting the real stats from the physical computers but has several
+        advantages, too:
+
+        - the results are not dependent on the status of the virtual machines (aka if they actually run or not)
+        - the results are generated much faster
     #>
     [CmdletBinding()]
     Param()
 
     Process {
-        $vmsOnTheMaster = Get-MICROVM -NoFilter
-
-        $ramTotalJobs = Get-MICRONode | Where-Object IsActive -eq $true | ForEach-Object {
-            $node = $_
-        
-            Start-Job -ArgumentList $node -ScriptBlock {
-                Param($node)
-                $RamGB = Invoke-Command -ComputerName $node -ScriptBlock {
-                    (Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).sum /1gb
-                }
-
-                New-Object -TypeName PSObject -Property @{
-                    Node = $node
-                    RamGB = $RamGB
-                }
-            }
-        }
-        
-        $ramTotal = $ramTotalJobs | Wait-Job | Receive-Job
-
-        Get-MICRONode | Where-Object IsActive -eq $true | ForEach-Object {
-            $node = $_
-
-            $ramTotalNode = ($ramTotal | Where-Object Node -eq $node).RamGB
-
-            $reservedRAMPerNode = 6 # GB
-
-            $usedByVMsGB = ((($vmsOnTheMaster | Where-Object Node -eq $node).VM.MemoryAssigned) | Measure-Object -Sum).Sum/1GB
-
-            New-Object -TypeName PSObject -Property @{
-                Node = $node
-                RamTotalGB = $ramTotalNode - $reservedRAMPerNode - $usedByVMsGB
-            }
-        }
+        Get-MICROSql -query "SELECT * FROM MICRONodeStats"
     }
 }
 

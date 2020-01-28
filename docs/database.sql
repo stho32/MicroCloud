@@ -24,7 +24,7 @@ CREATE TABLE Node (
 	Id INT NOT NULL PRIMARY KEY IDENTITY,
 	Name VARCHAR(200) NOT NULL,
 	RAMAvailableTotalInGB DECIMAL(15,2) NOT NULL DEFAULT 0,
-	IstActive BIT NOT NULL DEFAULT 1
+	IsActive BIT NOT NULL DEFAULT 1
 )
 GO
 
@@ -94,7 +94,8 @@ CREATE TABLE VirtualMachine (
 	CloudInternalIP VARCHAR(200) NOT NULL DEFAULT '',
 	CreatedOnNode INT NOT NULL REFERENCES Node(Id),
 	CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
-	IsActive BIT NOT NULL DEFAULT 0
+	IsActive BIT NOT NULL DEFAULT 0,
+	RemoveThisVm BIT NOT NULL DEFAULT 0
 )
 
 /* ------------------------------------------------------------------------------------------
@@ -120,3 +121,28 @@ CREATE TABLE VirtualMachinePortForwarding (
 	PortOnEntranceRouter INT NOT NULL DEFAULT 0,
 	IsEnabled BIT NOT NULL DEFAULT 0 -- Has it been processed and set on the router? (The background process does that)
 )
+
+GO
+
+
+/* ------------------------------------------------------------------------------------------
+
+*/	
+IF (EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'MICRONodeStats'))
+BEGIN
+	DROP VIEW MICRONodeStats;
+END
+GO
+CREATE VIEW MICRONodeStats
+    AS
+	/* This view returns a statistic about the available RAM on each node
+	   by doing a simple database query.
+
+	   For the advantages and disadvantages of the approach see the help of the cmdlet
+	   with the same name.
+	 */
+	 SELECT Name, 
+			RAMAvailableTotalInGB - ISNULL((SELECT SUM(RAMInGB) FROM VirtualMachine vm WHERE vm.CreatedOnNode = n.Id),0) AS RamTotalGB
+	   FROM Node n
+	  WHERE n.IsActive = 1
+GO

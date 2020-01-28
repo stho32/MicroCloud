@@ -9,7 +9,7 @@ function Get-MICRONodeStats {
     Process {
         $vmsOnTheMaster = Get-MICROVM -NoFilter
 
-        $ramTotalJobs = $global:MICROCLOUD_MicroNodes | ForEach-Object {
+        $ramTotalJobs = Get-MICRONode | Where-Object IsActive -eq $true | ForEach-Object {
             $node = $_
         
             Start-Job -ArgumentList $node -ScriptBlock {
@@ -27,7 +27,7 @@ function Get-MICRONodeStats {
         
         $ramTotal = $ramTotalJobs | Wait-Job | Receive-Job
 
-        $global:MICROCLOUD_MicroNodes | ForEach-Object {
+        Get-MICRONode | Where-Object IsActive -eq $true | ForEach-Object {
             $node = $_
 
             $ramTotalNode = ($ramTotal | Where-Object Node -eq $node).RamGB

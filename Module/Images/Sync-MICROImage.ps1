@@ -19,7 +19,7 @@ function Sync-MICROImage {
         $SourcePath = $global:MICROCLOUD_ImageDirectory
         $TargetPath = $global:MICROCLOUD_ImageNodeDirectory
 
-        $global:MICROCLOUD_MicroNodes | ForEach-Object {
+        Get-MICRONode | Where-Object IsActive -eq $true | ForEach-Object {
             $node = $_
 
             Write-Host "- ensuring target directory exists on $node ..."

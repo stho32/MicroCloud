@@ -15,7 +15,7 @@ function Get-MICROVM {
     Process {
         if ( $NoFilter )
         {
-           $global:MICROCLOUD_MicroNodes | ForEach-Object {
+            Get-MICRONode | Where-Object IsActive -eq $true | ForEach-Object {
                 $node = $_
 
                 Get-VM -ComputerName $node | ForEach-Object {
@@ -31,7 +31,7 @@ function Get-MICROVM {
             return
         }
 
-        $global:MICROCLOUD_MicroNodes | ForEach-Object {
+        Get-MICRONode | Where-Object IsActive -eq $true | ForEach-Object {
             $node = $_
 
             Get-VM -ComputerName $node -Name ($global:MICROCLOUD_VMNamesStartWith + "*") | ForEach-Object {

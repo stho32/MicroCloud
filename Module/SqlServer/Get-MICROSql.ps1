@@ -1,4 +1,4 @@
-function Get-SQLSResult($query, $parameter = @{}) {
+function Get-MICROSql($query, $parameter = @{}) {
     $SqlConnection = New-Object System.Data.SqlClient.SqlConnection
 
     $sqlServer = $global:MICROCLOUD_SQLServer

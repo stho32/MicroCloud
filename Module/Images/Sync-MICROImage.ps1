@@ -16,8 +16,8 @@ function Sync-MICROImage {
     )
 
     Process {
-        $SourcePath = $global:MICROCLOUD_ImageDirectory
-        $TargetPath = $global:MICROCLOUD_ImageNodeDirectory
+        $SourcePath = Get-MICROConfigurationValue -Name "TheMastersLocalImageDirectoryBeforeDistribution"
+        $TargetPath = Get-MICROConfigurationValue -Name "TheNodesLocalImageDirectory"
 
         Get-MICRONode | Where-Object IsActive -eq $true | ForEach-Object {
             $node = $_

@@ -20,8 +20,11 @@ function Add-MICROVM {
             throw "Not enough RAM for another VM..."
         }
 
+        $ImageNodeDirectory = Get-MICROConfigurationValue -Name "TheNodesLocalImageDirectory"
+        $VMNamesStartWith = Get-MICROConfigurationValue -Name "VMNamesStartWith"
+
         Invoke-Command -ComputerName $mostEmptyNode.Node `
-            -ArgumentList $global:MICROCLOUD_ImageNodeDirectory, $global:MICROCLOUD_VMNamesStartWith, $baseImage, $mostEmptyNode.Node `
+            -ArgumentList $ImageNodeDirectory, $VMNamesStartWith, $baseImage, $mostEmptyNode.Node `
             -ScriptBlock {
                 Param($ImageNodeDirectory, $MicroVMNamesStartWith, $baseImage, $node)
 

@@ -34,7 +34,9 @@ function Get-MICROVM {
         Get-MICRONode | Where-Object IsActive -eq $true | ForEach-Object {
             $node = $_
 
-            Get-VM -ComputerName $node -Name ($global:MICROCLOUD_VMNamesStartWith + "*") | ForEach-Object {
+            $VMNamesStartWith = Get-MICROConfigurationValue -Name "VMNamesStartWith"
+
+            Get-VM -ComputerName $node -Name ($VMNamesStartWith + "*") | ForEach-Object {
                 $vm = $_
 
                 New-Object -TypeName PSObject -Property @{

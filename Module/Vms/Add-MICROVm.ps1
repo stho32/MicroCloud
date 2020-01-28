@@ -13,7 +13,7 @@ function Add-MICROVM {
         <# Find us the most empty node to create the next vm there.
            We find this node by our scarest resource, the memory.  
         #>
-        $mostEmptyNode = (Get-MICRONodeStats | Sort-Object -Property RamTotalGB -Descending | Select -First 1)
+        $mostEmptyNode = (Get-MICRONodeStats | Sort-Object -Property RamTotalGB -Descending | Select-Object -First 1)
 
         $ramNeededInGb = 4
         if ($mostEmptyNode.RamTotalGB -lt $ramNeededInGb) {
@@ -39,7 +39,7 @@ function Add-MICROVM {
                 $vmDiskPath = (Join-Path $disksPath "$newVmName")+".vhdx"
 
                 # create a new differential disk
-                $vmDisk = New-VHD -Path $vmDiskPath -Differencing -ParentPath $baseImagePath
+                New-VHD -Path $vmDiskPath -Differencing -ParentPath $baseImagePath | Out-Null
 
                 # create vm
                 $vm = New-VM -Name $newVmName -MemoryStartupBytes 4GB -VHDPath $vmDiskPath -SwitchName "external switch" -Generation 2 

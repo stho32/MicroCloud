@@ -85,16 +85,21 @@ GO
 
 */	
 
+
 CREATE TABLE VirtualMachine (
 	Id INT NOT NULL PRIMARY KEY IDENTITY,
 	Name VARCHAR(200) NOT NULL DEFAULT '',
+	BaseImage VARCHAR(200) NOT NULL DEFAULT '',
+	CreatedOnNode INT NOT NULL REFERENCES Node(Id),
+
 	Alias VARCHAR(200) NOT NULL DEFAULT '',
 	Status VARCHAR(200) NOT NULL DEFAULT '',
 	RAMinGB DECIMAL(15,4) NOT NULL DEFAULT 4,
 	CloudInternalIP VARCHAR(200) NOT NULL DEFAULT '',
-	CreatedOnNode INT NOT NULL REFERENCES Node(Id),
 	CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
-	IsActive BIT NOT NULL DEFAULT 0,
+
+	ActivateThisVm BIT NOT NULL DEFAULT 0,
+	IsActivated BIT NOT NULL DEFAULT 0,
 	RemoveThisVm BIT NOT NULL DEFAULT 0
 )
 
@@ -124,6 +129,25 @@ CREATE TABLE VirtualMachinePortForwarding (
 
 GO
 
+/* ------------------------------------------------------------------------------------------
+
+*/	
+IF (EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'RAMOccupiedPerNode'))
+BEGIN
+	DROP VIEW RAMOccupiedPerNode;
+END
+GO
+CREATE VIEW RAMOccupiedPerNode
+    AS
+	/* 
+		sums up the ram used per node
+	 */
+
+	SELECT CreatedOnNode, SUM(RAMInGB) AS RAMOccupiedInGB
+	  FROM VirtualMachine v
+     GROUP BY CreatedOnNode 
+GO
+
 
 /* ------------------------------------------------------------------------------------------
 
@@ -141,8 +165,91 @@ CREATE VIEW MICRONodeStats
 	   For the advantages and disadvantages of the approach see the help of the cmdlet
 	   with the same name.
 	 */
-	 SELECT Name, 
-			RAMAvailableTotalInGB - ISNULL((SELECT SUM(RAMInGB) FROM VirtualMachine vm WHERE vm.CreatedOnNode = n.Id),0) AS RamTotalGB
+	 SELECT Id,
+			Name, 
+			RAMAvailableTotalInGB - ISNULL(RAMOccupiedInGB,0) AS RamTotalGB
 	   FROM Node n
+	   LEFT JOIN RAMOccupiedPerNode ropn ON ropn.CreatedOnNode = n.Id
 	  WHERE n.IsActive = 1
 GO
+
+/* ------------------------------------------------------------------------------------------
+
+	Create a virtual machine
+
+*/	
+IF (EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_NAME LIKE 'AddMicroVM'))
+BEGIN
+	DROP PROCEDURE AddMicroVM;
+END
+GO
+
+CREATE PROCEDURE AddMicroVM (@BaseImage VARCHAR(200))
+    AS
+BEGIN
+	/* Creates a virtual machine */
+	DECLARE @Node INT
+	DECLARE @Name VARCHAR(200)
+	DECLARE @NewId INT
+	
+	/* Get the node with most RAM available */
+	SELECT TOP 1 @Node = Id
+	  FROM MICRONodeStats
+	 WHERE RamTotalGB > 4
+	 ORDER BY RamTotalGB DESC
+
+	/* Grab a new name */
+	SELECT @Name = (SELECT Value FROM Configuration WHERE Name = 'VMNamesStartWith') + CAST(NEWID () AS VARCHAR(100))
+	
+	INSERT INTO VirtualMachine (Name, BaseImage, CreatedOnNode, ActivateThisVm)
+	SELECT @Name, @BaseImage, @Node, 1
+
+	SELECT @Name AS Name
+END
+GO
+/* ------------------------------------------------------------------------------------------
+
+	View to select all vms that need to be added in this round
+
+*/	
+IF (EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'VirtualMachinesThatWaitForActivation'))
+BEGIN
+	DROP VIEW VirtualMachinesThatWaitForActivation;
+END
+GO
+CREATE VIEW VirtualMachinesThatWaitForActivation
+	AS
+	/* these are the virtual machines that we need to "activate"
+	   which basically means we create them within the hypervisor.
+	*/
+	SELECT vm.Name AS VMName, 
+		   n.Name AS Node,
+		   BaseImage
+	  FROM VirtualMachine vm
+	  JOIN Node n ON vm.CreatedOnNode = n.Id
+	 WHERE ActivateThisVm = 1
+	   AND IsActivated = 0
+GO
+
+/* ------------------------------------------------------------------------------------------
+
+	The virtual machine has been activated
+
+*/	
+IF (EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_NAME LIKE 'VmHasBeenActivated'))
+BEGIN
+	DROP PROCEDURE VmHasBeenActivated;
+END
+GO
+
+CREATE PROCEDURE VmHasBeenActivated (@Name VARCHAR(200))
+    AS
+BEGIN
+	/*
+		This STP is called when the vm has been created and started on the hyper-visor.
+		We need to update our data now, so we know it has been activated.
+	*/
+	UPDATE dbo.VirtualMachine
+	   SET IsActivated = 1
+	 WHERE Name = @Name
+END

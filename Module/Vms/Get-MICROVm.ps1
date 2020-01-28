@@ -16,7 +16,7 @@ function Get-MICROVM {
         if ( $NoFilter )
         {
             Get-MICRONode | Where-Object IsActive -eq $true | ForEach-Object {
-                $node = $_
+                $node = $_.Name
 
                 Get-VM -ComputerName $node | ForEach-Object {
                     $vm = $_
@@ -32,7 +32,7 @@ function Get-MICROVM {
         }
 
         Get-MICRONode | Where-Object IsActive -eq $true | ForEach-Object {
-            $node = $_
+            $node = $_.Name
 
             $VMNamesStartWith = Get-MICROConfigurationValue -Name "VMNamesStartWith"
 

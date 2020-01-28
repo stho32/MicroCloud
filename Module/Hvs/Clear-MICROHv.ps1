@@ -7,7 +7,7 @@ function Clear-MICROHV {
     Param()
 
     Process {
-        $vms = Get-MICROVM | Where { $_.Vm.State -eq "Off" }
+        $vms = Get-MICROVM | Where-Object { $_.Vm.State -eq "Off" }
         
         $vms | ForEach-Object {
             $vm = $_

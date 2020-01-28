@@ -59,9 +59,3 @@ function Add-MICROVM {
     }
 }
 
-<#
-    We want to be able to tab through the available list of base images
-#>
-Register-ArgumentCompleter -CommandName Add-MICROVM -ParameterName BaseImage -ScriptBlock {
-    (Get-ChildItem -Path Join-Path $global:MICROCLOUD_ImageNodeDirectory -Filter "*-image.vhdx" | Select-Object -ExpandProperty Name).Replace(".vhdx", "")
-}

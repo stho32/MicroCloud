@@ -19,7 +19,7 @@ function Invoke-MICROSql($query, $parameter = @{}) {
             $SqlCmd.Parameters.AddWithValue("@" + $p.Name, $p.Value) | Out-Null
         }
 
-        $SqlCmd.ExecuteNonQuery()
+        $SqlCmd.ExecuteNonQuery() | Out-Null
     }
     finally 
     {

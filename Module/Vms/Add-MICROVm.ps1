@@ -5,11 +5,11 @@ function Add-MICROVM {
     #>
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
         [string]$VMName,
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
         [string]$Node,
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
         [string]$BaseImage
     )
 
@@ -17,7 +17,7 @@ function Add-MICROVM {
         $ImageNodeDirectory = Get-MICROConfigurationValue -Name "TheNodesLocalImageDirectory"
         $VMNamesStartWith = Get-MICROConfigurationValue -Name "VMNamesStartWith"
 
-        Invoke-Command -ComputerName $mostEmptyNode.Node `
+        Invoke-Command -ComputerName $Node `
             -ArgumentList $ImageNodeDirectory, $VMNamesStartWith, $baseImage, $Node, $vmName `
             -ScriptBlock {
                 Param($ImageNodeDirectory, $MicroVMNamesStartWith, $baseImage, $node, $newVmName)

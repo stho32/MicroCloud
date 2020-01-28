@@ -6,35 +6,26 @@ function Add-MICROVM {
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory=$true)]
-        $BaseImage
+        [string]$VMName,
+        [Parameter(Mandatory=$true)]
+        [string]$Node,
+        [Parameter(Mandatory=$true)]
+        [string]$BaseImage
     )
 
     Process {
-        <# Find us the most empty node to create the next vm there.
-           We find this node by our scarest resource, the memory.  
-        #>
-        $mostEmptyNode = (Get-MICRONodeStats | Sort-Object -Property RamTotalGB -Descending | Select-Object -First 1)
-
-        $ramNeededInGb = 4
-        if ($mostEmptyNode.RamTotalGB -lt $ramNeededInGb) {
-            throw "Not enough RAM for another VM..."
-        }
-
         $ImageNodeDirectory = Get-MICROConfigurationValue -Name "TheNodesLocalImageDirectory"
         $VMNamesStartWith = Get-MICROConfigurationValue -Name "VMNamesStartWith"
 
         Invoke-Command -ComputerName $mostEmptyNode.Node `
-            -ArgumentList $ImageNodeDirectory, $VMNamesStartWith, $baseImage, $mostEmptyNode.Node `
+            -ArgumentList $ImageNodeDirectory, $VMNamesStartWith, $baseImage, $Node, $vmName `
             -ScriptBlock {
-                Param($ImageNodeDirectory, $MicroVMNamesStartWith, $baseImage, $node)
+                Param($ImageNodeDirectory, $MicroVMNamesStartWith, $baseImage, $node, $newVmName)
 
                 # The path, where the vm hard disks are created locally. This is a default of Hyper-V.
                 $disksPath = "C:\Users\Public\Documents\Hyper-V\Virtual hard disks"
                 # The path, where we have the base images distributed to
                 $baseImagePath = Join-Path $ImageNodeDirectory "$baseImage.vhdx"
-
-                $guid = [Guid]::NewGuid().ToString()
-                $newVmName = $MicroVMNamesStartWith + $guid
 
                 $vmDiskPath = (Join-Path $disksPath "$newVmName")+".vhdx"
 
@@ -56,6 +47,8 @@ function Add-MICROVM {
                     VM = $vm
                 }
             }
+
+        Set-MICROVmHasBeenActivated -VMName $VMName
     }
 }
 

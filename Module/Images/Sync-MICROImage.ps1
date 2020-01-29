@@ -20,7 +20,7 @@ function Sync-MICROImage {
         $TargetPath = Get-MICROConfigurationValue -Name "TheNodesLocalImageDirectory"
 
         Get-MICRONode | Where-Object IsActive -eq $true | ForEach-Object {
-            $node = $_
+            $node = $_.Name
 
             Write-Host "- ensuring target directory exists on $node ..."
             Invoke-Command -ComputerName $node -ArgumentList $TargetPath -ScriptBlock {

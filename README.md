@@ -14,6 +14,10 @@ A little bit of setup and cables later I can start ~18 virtual machines from pre
 
 I want it to become a little independent "micro cloud" which will allow me and my collegues to request testing and build environments on demand. 
 
-## What commands are available? (demo??)
+## Documentation
 
-[Example script here](example.ps1)
+  - [architecture](docs/architecture.md)
+  - [example script master](example.ps1)
+  - [configuration for entrance router](docs/configure-mikrotik-entrance-router.md)
+  - [creating unattended xml for windows 10 automated installation](https://www.windowscentral.com/how-create-unattended-media-do-automated-installation-windows-10)
+

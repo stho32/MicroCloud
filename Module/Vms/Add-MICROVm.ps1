@@ -32,6 +32,22 @@ function Add-MICROVM {
                 # create a new differential disk
                 New-VHD -Path $vmDiskPath -Differencing -ParentPath $baseImagePath | Out-Null
 
+                # now we need to inject some stuff so the vm will talk to the main system
+                Mount-DiskImage -ImagePath $vmDiskPath
+
+                $DriveLetter = (Get-DiskImage -ImagePath $vmDiskPath | GET-DISK | GET-PARTITION).DriveLetter | Sort-Object -Descending | Select -First 1
+
+                $integrationScript = $DriveLetter + "\MicroCloud\MicroCloud\integration.ps1"
+
+                if ( Test-Path $integrationScript ) {
+                    $content = Get-Content $integrationScript -Raw
+                    $content = $content.Replace('$VMNAME$', $newVmName)
+                    $content = $content.Replace('$APIURL$', "http://192.168.88.2:81") 
+                    Set-Content -Value $content -Path $integrationScript   
+                }
+
+                Dismount-DiskImage -ImagePath $vmDiskPath
+
                 # create vm
                 $vm = New-VM -Name $newVmName -MemoryStartupBytes 4GB -VHDPath $vmDiskPath -SwitchName "external switch" -Generation 2 
                 # more processing power

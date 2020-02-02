@@ -37,7 +37,7 @@ function Add-MICROVM {
 
                 $DriveLetter = (Get-DiskImage -ImagePath $vmDiskPath | GET-DISK | GET-PARTITION).DriveLetter | Sort-Object -Descending | Select -First 1
 
-                $integrationScript = $DriveLetter + ":\MicroCloud\MicroCloud\integration.ps1"
+                $integrationScript = $DriveLetter + ":\MicroCloud\integration.ps1"
 
                 if ( Test-Path $integrationScript ) {
                     $content = Get-Content $integrationScript -Raw

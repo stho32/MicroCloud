@@ -121,7 +121,7 @@ GO
 
 CREATE TABLE VirtualMachinePortForwarding (
 	Id INT NOT NULL PRIMARY KEY IDENTITY,
-	VirtualMachineId INT NOT NULL REFERENCES VirtualMachine(Id),
+	VirtualMachineId INT NOT NULL, -- this is explicit: no referencial integrity ! we need freedom here to separate the worker for the vms from the port worker
 	Comment VARCHAR(200) NOT NULL DEFAULT '',
 	LocalPort INT NOT NULL DEFAULT 0,
 	PortOnEntranceRouter INT NOT NULL DEFAULT 0,

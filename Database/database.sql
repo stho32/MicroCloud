@@ -278,3 +278,53 @@ BEGIN
 	   SET IsActivated = 1
 	 WHERE Name = @Name
 END
+
+/* ------------------------------------------------------------------------------------------
+
+	View to select all port forwardings that are waiting for their creation
+
+*/	
+IF (EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'PortForwardingsWaitingForCreation'))
+BEGIN
+	DROP VIEW PortForwardingsWaitingForCreation;
+END
+GO
+
+CREATE VIEW PortForwardingsWaitingForCreation
+    AS
+	/*
+		These port forwardings are waiting to be enabled on the 
+		router. (Port and NAT)
+		The moment we have a cloud internal ip the thing can be done...
+	*/
+	SELECT pf.Id, VirtualMachineId, LocalPort, PortOnEntranceRouter, 
+		   vm.Name AS VMName, CloudInternalIP 
+	  FROM VirtualMachinePortForwarding pf
+	  JOIN VirtualMachine vm ON pf.VirtualMachineId = vm.Id
+	 WHERE IsEnabled  = 0
+	   AND RemoveThis = 0
+	   AND CloudInternalIP <> ''
+GO
+
+/* ------------------------------------------------------------------------------------------
+
+	View to select all port forwardings that are not needed anymore
+
+*/	
+IF (EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'PortForwardingsWaitingForRemoval'))
+BEGIN
+	DROP VIEW PortForwardingsWaitingForRemoval;
+END
+GO
+
+CREATE VIEW PortForwardingsWaitingForRemoval
+    AS
+	/*
+		These port forwardings need to go away.
+	*/
+	SELECT pf.Id, VirtualMachineId, LocalPort, PortOnEntranceRouter, 
+		   vm.Name AS VMName, CloudInternalIP 
+	  FROM VirtualMachinePortForwarding pf
+	  LEFT JOIN VirtualMachine vm ON pf.VirtualMachineId = vm.Id
+	 WHERE RemoveThis = 1 OR vm.Id IS NULL
+GO

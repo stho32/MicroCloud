@@ -9,7 +9,14 @@ function Get-MICROConfigurationValue {
         [ValidateSet(
             "VMNamesStartWith", 
             "TheMastersLocalImageDirectoryBeforeDistribution", 
-            "TheNodesLocalImageDirectory")]
+            "TheNodesLocalImageDirectory",
+            "EntranceRouterInternalIP",
+            "EntranceRouterExternalIP",
+            "MasterIP",
+            "EntranceRouterPortRangeStart",
+            "EntranceRouterPortRangeEnd",
+            "EntranceRouterUsername", 
+            "EntranceRouterPassword")]
         [string]$Name
     )
     

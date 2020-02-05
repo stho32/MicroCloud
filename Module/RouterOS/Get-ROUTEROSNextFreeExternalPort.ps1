@@ -5,14 +5,13 @@ function Get-ROUTEROSNextFreeExternalPort {
     #>
     [CmdletBinding()]
     Param(
-        [PSObject]$ExistingPortForwardings,
-        [Parameter(Mandatory=$true)]
-        [int]$PortRangeStart,
-        [Parameter(Mandatory=$true)]
-        [int]$PortRangeEnd
+        [PSObject]$ExistingPortForwardings
     )
 
     Process {
+        $PortRangeStart = [int](Get-MICROConfigurationValue -Name EntranceRouterPortRangeStart)
+        $PortRangeEnd = [int](Get-MICROConfigurationValue -Name EntranceRouterPortRangeEnd)
+
         $PortRangeStart..$PortRangeEnd | 
             Where-Object { $_ -notin $ExistingPortForwardings.DstPort } | 
             Sort-Object | 

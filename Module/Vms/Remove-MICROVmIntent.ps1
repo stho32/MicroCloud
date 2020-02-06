@@ -13,7 +13,7 @@ function Remove-MICROVmIntent {
         Invoke-MICROSql -query "
             DELETE FROM VirtualMachinePortForwarding
              WHERE VirtualMachineId IN 
-                    ( SELECT Id FROM VirtualMachine WHERE Name = @Name )" -parameter @{
+                    ( SELECT vm.Id FROM VirtualMachine vm WHERE vm.Name = @Name )" -parameter @{
             Name = $Name
         }
 

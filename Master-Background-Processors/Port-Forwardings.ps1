@@ -2,11 +2,11 @@
 
 Start-Sleep -Seconds 1
 
-Write-Host "  - $(Get-Date) checking for port forwarding todos"
+Write-Host "[$(Get-Date)] checking for port forwarding todos ..."
 
 # get me a list of port forwardings, that are valid at this very moment
 $portForwardingsDefined = Get-MICROSql -query "
-SELECT vm.Id, VirtualMachineId, LocalPort, PortOnEntranceRouter, 
+SELECT pf.Id, VirtualMachineId, LocalPort, PortOnEntranceRouter, 
        vm.Name AS VMName, CloudInternalIP 
   FROM VirtualMachinePortForwarding pf
   JOIN VirtualMachine vm ON pf.VirtualMachineId = vm.Id

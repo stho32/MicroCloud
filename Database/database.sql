@@ -6,7 +6,7 @@
 
 	For every node in our system we have an entry in this table. 
 
-*/	
+*/
  
 IF (EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'VirtualMachine'))
 BEGIN
@@ -328,3 +328,29 @@ CREATE VIEW PortForwardingsWaitingForRemoval
 	  LEFT JOIN VirtualMachine vm ON pf.VirtualMachineId = vm.Id
 	 WHERE RemoveThis = 1 OR vm.Id IS NULL
 GO
+
+/* ------------------------------------------------------------------------------------------
+
+	Api keys are needed to authenticate users
+
+*/	
+
+IF (EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE 'ApiKey'))
+BEGIN
+	DROP TABLE ApiKey;
+END
+GO
+
+CREATE TABLE ApiKey (
+	Id INT NOT NULL PRIMARY KEY IDENTITY,
+	Code VARCHAR(200) NOT NULL DEFAULT '',
+	Comment VARCHAR(200) NOT NULL DEFAULT '',
+	IsActive BIT NOT NULL DEFAULT 0
+)
+GO
+
+-- Reference to creator / owner, but without referential integrity
+ALTER TABLE VirtualMachine
+  ADD ApiKeyId INT NOT NULL DEFAULT -1 
+
+

@@ -2,7 +2,7 @@
 
 A micro Hyper-V cloud held together by powershell
 
-![Architecture as an image](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Architecture as an image")
+![Architecture as an image](docs/overview.png "Architecture as an image")
 
 ## What exactly do you mean?
 

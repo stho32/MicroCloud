@@ -2,6 +2,8 @@
 
 A micro Hyper-V cloud held together by powershell
 
+![Architecture as an image](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Architecture as an image")
+
 ## What exactly do you mean?
 
   - [I have 3 NUCs. Those things with skulls on them.](https://www.amazon.de/s?k=BOXNUC8I7HNK2+Barebone&i=computers)

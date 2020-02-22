@@ -377,7 +377,7 @@ BEGIN
 	/* Get the node with most RAM available */
 	SELECT TOP 1 @Node = Id
 	  FROM MICRONodeStats
-	 WHERE RamTotalGB > @RamInGb
+	 WHERE RamTotalGB >= @RamInGb
 	 ORDER BY RamTotalGB DESC
 
 	/* Grab a new name */

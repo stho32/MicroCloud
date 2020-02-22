@@ -226,7 +226,8 @@ CREATE VIEW VirtualMachinesThatWaitForActivation
 	*/
 	SELECT vm.Name AS VMName, 
 		   n.Name AS Node,
-		   BaseImage
+		   BaseImage,
+		   RamInGB
 	  FROM VirtualMachine vm
 	  JOIN Node n ON vm.CreatedOnNode = n.Id
 	 WHERE ActivateThisVm = 1

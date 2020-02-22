@@ -10,7 +10,9 @@ function Add-MICROVM {
         [Parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
         [string]$Node,
         [Parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true)]
-        [string]$BaseImage
+        [string]$BaseImage,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [int]$RamInGB
     )
 
     Process {
@@ -18,9 +20,9 @@ function Add-MICROVM {
         $VMNamesStartWith = Get-MICROConfigurationValue -Name "VMNamesStartWith"
 
         Invoke-Command -ComputerName $Node `
-            -ArgumentList $ImageNodeDirectory, $VMNamesStartWith, $baseImage, $Node, $vmName `
+            -ArgumentList $ImageNodeDirectory, $VMNamesStartWith, $baseImage, $Node, $vmName, $RamInGB `
             -ScriptBlock {
-                Param($ImageNodeDirectory, $MicroVMNamesStartWith, $baseImage, $node, $newVmName)
+                Param($ImageNodeDirectory, $MicroVMNamesStartWith, $baseImage, $node, $newVmName, $ramInGB)
 
                 # The path, where the vm hard disks are created locally. This is a default of Hyper-V.
                 $disksPath = "C:\Users\Public\Documents\Hyper-V\Virtual hard disks"
@@ -49,7 +51,7 @@ function Add-MICROVM {
                 Dismount-DiskImage -ImagePath $vmDiskPath
 
                 # create vm
-                $vm = New-VM -Name $newVmName -MemoryStartupBytes 4GB -VHDPath $vmDiskPath -SwitchName "external switch" -Generation 2 
+                $vm = New-VM -Name $newVmName -MemoryStartupBytes ($ramInGB*1GB) -VHDPath $vmDiskPath -SwitchName "external switch" -Generation 2 
                 # more processing power
                 $vm | Set-VMProcessor -Count 8
                 # activate nested virtualization

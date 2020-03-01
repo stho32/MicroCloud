@@ -7,12 +7,15 @@ function Set-MICROVmHasBeenActivated {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
-        [string]$VmName
+        [string]$VmName,
+        [Parameter(Mandatory=$true)]
+        [string]$MacAddress
     )
     
     process {
-        Invoke-MICROSql -query 'EXEC dbo.VmHasBeenActivated @VmName' -parameter @{
+        Invoke-MICROSql -query 'EXEC dbo.VmHasBeenActivated @VmName, @MacAddress' -parameter @{
             VmName = $VmName
+            MacAddress = $MacAddress
         }
     }
 }

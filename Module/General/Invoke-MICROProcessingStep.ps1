@@ -13,5 +13,7 @@ function Invoke-MICROProcessingStep {
         Get-MICROVmWaitingForActivation | Add-MICROVM
         # deactivate and remove vms that wait for that
         Get-MICROVmWaitingForRemoval | Stop-MICROVMIntent
+        # Update IP Address table
+        Invoke-MICROUpdateIPAddressTable
     }
 }

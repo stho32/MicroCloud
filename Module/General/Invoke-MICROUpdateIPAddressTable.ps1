@@ -1,4 +1,4 @@
-function Invoke-UpdateIPAddressTable {
+function Invoke-MICROUpdateIPAddressTable {
     <#
         .SYNOPSIS
         Uses information about MAC Addresses retrieved from the VM and the router to find out about the IP Addresses within the network

@@ -1,0 +1,2 @@
+ALTER TABLE VirtualMachine
+  ADD MacAddress VARCHAR(200) NOT NULL DEFAULT ''

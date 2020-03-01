@@ -23,13 +23,15 @@ function Invoke-MICROUpdateIPAddressTable {
                 $vmIntent = $_
                 $ip = ($dhcpLeases | Where-Object { $_.MacAddress.Trim() -eq $vmIntent.MacAddress.Trim() } | Select-Object -Last 1).Address
                 
-                Invoke-MICROSql -query "
-                    UPDATE dbo.VirtualMachine 
-                       SET CloudInternalIP = @Address
-                     WHERE Name = @VmName" -parameter @{
-                        VmName = $vmIntent.Name
-                        Address = $ip
-                    }
+                if ([bool]$ip) {
+                    Invoke-MICROSql -query "
+                        UPDATE dbo.VirtualMachine 
+                        SET CloudInternalIP = @Address
+                        WHERE Name = @VmName" -parameter @{
+                            VmName = $vmIntent.Name
+                            Address = $ip
+                        }
+                }
             }
         }
     }

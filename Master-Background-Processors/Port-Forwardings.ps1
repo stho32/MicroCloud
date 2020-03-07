@@ -1,8 +1,4 @@
-﻿Import-Module "C:\Projekte\MicroCloud\Module\MicroCloud.psm1"
-
-Start-Sleep -Seconds 1
-
-Write-Host "[$(Get-Date)] checking for port forwarding todos ..."
+﻿Write-Host "[$(Get-Date)] checking for port forwarding todos ..."
 
 # get me a list of port forwardings, that are valid at this very moment
 $portForwardingsDefined = Get-MICROSql -query "

@@ -1,0 +1,3 @@
+ALTER TABLE VirtualMachine
+  ADD StopThisVm BIT NOT NULL DEFAULT 0,
+      StartThisVm BIT NOT NULL DEFAULT 0

@@ -10,6 +10,7 @@ While ($true) {
     
     . .\Activate-and-remove-virtual-machines.ps1
     . .\Port-Forwardings.ps1
+    Invoke-MICROStartingAndStoppingVms
 
     # every 5th round we update the state information
     if ( ($roundCounter % 5) -eq 0 ) {

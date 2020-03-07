@@ -13,7 +13,7 @@ function Update-MICROVmStatus {
     
     process {
         Invoke-MICROSql -query "EXEC dbo.UpdateMicroVMStatus @VmName, @State" -parameter @{
-            VmName = $Name
+            VmName = $VmName
             State = $State
         }
     }

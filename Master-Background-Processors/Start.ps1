@@ -12,7 +12,7 @@ While ($true) {
     . .\Port-Forwardings.ps1
 
     # every 5th round we update the state information
-    if ( $roundCounter % 5 ) {
+    if ( ($roundCounter % 5) -eq 0 ) {
         Write-Host "[$(Get-Date)] passive update for virtual machine status..."
         Invoke-MICROUpdateVMStatusInformation
     }

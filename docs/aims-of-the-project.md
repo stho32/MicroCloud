@@ -11,4 +11,8 @@ More specifically:
   3. Enable easy experimentation on software by making it easy to get a computer for a few minutes and destroy it afterwards.
 
 Everyone should be able to just grab the compute they need for the time they need it. 
-Thus maximizing the return on investment on the shared hardware. 
+Thus maximizing the return on investment on the shared hardware.
+
+----
+
+[Back](index.md)

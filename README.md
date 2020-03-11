@@ -1,6 +1,6 @@
 # MicroCloud
 
-A micro Hyper-V cloud held together by powershell
+A thin management layer for a bunch of hyper-v hosts to create a small, automatable powershell driven private cloud
 
 ![Architecture as an image](docs/overview.png "Architecture as an image")
 

@@ -1,6 +1,6 @@
 # Index
 
-  - (aims-of-the-project.md)[Aims of the project]
+  - [Aims of the project](aims-of-the-project.md)
 
 
 *TODO*

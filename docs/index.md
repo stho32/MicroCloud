@@ -1,11 +1,11 @@
 # Index
 
   - [Aims of the project](aims-of-the-project.md)
-
+  - [screenshots](screenshots/screenshots.md)
 
 *TODO*
 
-  - screenshots
+
   - general architecture
   - networking models
   - requirements

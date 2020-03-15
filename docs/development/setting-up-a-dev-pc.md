@@ -7,6 +7,7 @@ When developing on the project I mostly do an ADD-MICROVM with a fresh Windows S
 ```powershell
 choco install -y firefox vscode git.install tortoisegit
 choco install -y visualstudio2019professional visualstudio2019-workload-netweb 
+choco install -y nuget.commandline
 choco install -y sql-server-management-studio
 choco install -y sql-server-express
 cd c:\

@@ -34,15 +34,16 @@ USE [master]
 GO
 EXEC xp_instance_regwrite N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer', N'LoginMode', REG_DWORD, 2
 GO
-CREATE LOGIN [MicroCloudUser] WITH PASSWORD=N'123123', DEFAULT_DATABASE=[MicroCloud], CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF
-GO
 
 IF ( NOT EXISTS (SELECT Name FROM sys.databases WHERE name='MicroCloud') ) 
 BEGIN
     CREATE DATABASE MicroCloud;
 END
-
 GO
+
+CREATE LOGIN [MicroCloudUser] WITH PASSWORD=N'123123', DEFAULT_DATABASE=[MicroCloud], CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF
+GO
+
 use [MicroCloud];
 GO
 CREATE USER [MicroCloudUser] FOR LOGIN [MicroCloudUser]

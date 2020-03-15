@@ -2,6 +2,8 @@
 
 When developing on the project I mostly do an ADD-MICROVM with a fresh Windows Server 2019 installation that has chocolatey already installed. Then I open an administrative shell and use the following script:
 
+## install all the software needed
+
 ```powershell
 choco install -y firefox vscode git.install tortoisegit
 choco install -y visualstudio2019professional visualstudio2019-workload-netweb 
@@ -22,7 +24,12 @@ Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-Online -All
 Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-Management-Clients -All -NoRestart
 Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-Management-PowerShell -All -NoRestart
 
-Invoke-Sqlcmd -ServerInstance ".\SQLEXPRESS" "
+Restart-Computer
+```
+
+## create the database and database user
+
+```sql
 USE [master]
 GO
 EXEC xp_instance_regwrite N'HKEY_LOCAL_MACHINE', N'Software\Microsoft\MSSQLServer\MSSQLServer', N'LoginMode', REG_DWORD, 2
@@ -51,7 +58,5 @@ CREATE TABLE DatabaseMigrations (
 	HasBeenExecuted BIT NOT NULL DEFAULT 0,
 	TimestampOfExecution DATETIME 
 )
-" 
-
-Restart-Computer
 ```
+

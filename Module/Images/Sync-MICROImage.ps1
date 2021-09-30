@@ -17,25 +17,38 @@ function Sync-MICROImage {
 
     Process {
         $SourcePath = Get-MICROConfigurationValue -Name "TheMastersLocalImageDirectoryBeforeDistribution"
-        $TargetPath = Get-MICROConfigurationValue -Name "TheNodesLocalImageDirectory"
+        $TargetPaths = Get-MICROConfigurationValue -Name @((Get-MICROConfigurationValue -Name "TheNodesLocalImageDirectory").split("|"))
 
         Get-MICRONode | Where-Object IsActive -eq $true | ForEach-Object {
             $node = $_.Name
 
             Write-Host "- ensuring target directory exists on $node ..."
-            Invoke-Command -ComputerName $node -ArgumentList $TargetPath -ScriptBlock {
-                Param([string]$TargetPath)
-                if ( -not (Test-Path $TargetPath) ) {
-                    New-Item -Path $TargetPath -Force -ItemType Directory | Out-Null
+            Invoke-Command -ComputerName $node -ArgumentList $TargetPaths -ScriptBlock {
+                Param([string[]]$TargetPaths)
+
+                $TargetPaths | ForEach-Object {
+                    $TargetPath = $_
+
+                    if ( -not (Test-Path $TargetPath) ) {
+                        New-Item -Path $TargetPath -Force -ItemType Directory | Out-Null
+                    }
                 }
+
             }
 
             Write-Host "- Removing old images from $node ..."
-            Invoke-Command -ComputerName $node -ScriptBlock {
-                Get-ChildItem $TargetPath -Filter *.vhdx | Remove-Item
+            Invoke-Command -ComputerName $node -ArgumentList $TargetPaths -ScriptBlock {
+                Param([string[]]$TargetPaths)
+
+                $TargetPaths | Foreach-Object {
+                    $TargetPath = $_
+                    Get-ChildItem $TargetPath -Filter *.vhdx | Remove-Item
+                }
             }
 
             Write-Host "- Copying images to $node ..."
+            $TargetPath = $TargetPaths | Select-Object -Last 1
+            
             Get-ChildItem $SourcePath -Filter *-image.vhdx | ForEach-Object {
                 $filename = $_.FullName
                 $session = New-PSSession -ComputerName $node

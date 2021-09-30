@@ -16,18 +16,32 @@ function Add-MICROVM {
     )
 
     Process {
-        $ImageNodeDirectory = Get-MICROConfigurationValue -Name "TheNodesLocalImageDirectory"
+        $ImageNodeDirectories = @((Get-MICROConfigurationValue -Name "TheNodesLocalImageDirectory").split("|"))
+        #$ImageNodeDirectory 
         $VMNamesStartWith = Get-MICROConfigurationValue -Name "VMNamesStartWith"
 
         $result = Invoke-Command -ComputerName $Node `
-            -ArgumentList $ImageNodeDirectory, $VMNamesStartWith, $baseImage, $Node, $vmName, $RamInGB `
+            -ArgumentList $ImageNodeDirectories, $VMNamesStartWith, $baseImage, $Node, $vmName, $RamInGB `
             -ScriptBlock {
-                Param($ImageNodeDirectory, $MicroVMNamesStartWith, $baseImage, $node, $newVmName, $ramInGB)
+                Param($ImageNodeDirectories, $MicroVMNamesStartWith, $baseImage, $node, $newVmName, $ramInGB)
 
                 # The path, where the vm hard disks are created locally. This is a default of Hyper-V.
-                $disksPath = "C:\Users\Public\Documents\Hyper-V\Virtual hard disks"
+                #$disksPath = "C:\Users\Public\Documents\Hyper-V\Virtual hard disks"
+                $disksPath = "D:\VirtualHardDisks"
+
+                # Create disks path if we do not have it available
+                if (!Test-Path $disksPath) {
+                    New-Item -Path $disksPath -ItemType Directory
+                }
+
                 # The path, where we have the base images distributed to
-                $baseImagePath = Join-Path $ImageNodeDirectory "$baseImage.vhdx"
+                # We can have multiple directories configured. We use the last one we find, in 
+                # case we add hard-disks the bigger empty one is probably at the end
+                $baseImagePath = $ImageNodeDirectories | ForEach-Object {
+                    $ImageNodeDirectory = $_
+                    Join-Path $ImageNodeDirectory "$baseImage.vhdx"
+                } | Where-Object { Test-Path{ $_ } } |
+                    Select-Object -Last 1
 
                 $vmDiskPath = (Join-Path $disksPath "$newVmName")+".vhdx"
 

@@ -30,7 +30,7 @@ function Add-MICROVM {
                 $disksPath = "D:\VirtualHardDisks"
 
                 # Create disks path if we do not have it available
-                if (!Test-Path $disksPath) {
+                if (-not (Test-Path $disksPath)) {
                     New-Item -Path $disksPath -ItemType Directory
                 }
 

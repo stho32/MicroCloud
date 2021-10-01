@@ -31,7 +31,7 @@ function Add-MICROVM {
 
                 # Create disks path if we do not have it available
                 if (-not (Test-Path $disksPath)) {
-                    New-Item -Path $disksPath -ItemType Directory
+                    New-Item $disksPath -ItemType Directory
                 }
 
                 # The path, where we have the base images distributed to
@@ -40,7 +40,7 @@ function Add-MICROVM {
                 $baseImagePath = $ImageNodeDirectories | ForEach-Object {
                     $ImageNodeDirectory = $_
                     Join-Path $ImageNodeDirectory "$baseImage.vhdx"
-                } | Where-Object { Test-Path{ $_ } } |
+                } | Where-Object { Test-Path $_ } |
                     Select-Object -Last 1
 
                 $vmDiskPath = (Join-Path $disksPath "$newVmName")+".vhdx"

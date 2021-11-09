@@ -72,6 +72,8 @@ function Add-MICROVM {
                 $vm | Set-VMProcessor -ExposeVirtualizationExtensions $true
                 # in case we have the image of a linux distribution
                 $vm | Set-VMFirmware -EnableSecureBoot Off
+                # enable tpm for windows 11 support
+                #$vm | Enable-VMTPM
                 # start it
                 $vm | Start-VM 
 
